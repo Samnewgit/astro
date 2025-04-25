@@ -1,0 +1,134 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AstrologyForm from '../components/AstrologyForm.astro';
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+---
+
+<Layout>
+	<div class="cosmic-container">
+		<header>
+			<div class="logo">
+				<span class="logo-icon">✧</span>
+				<h1>Astrology Analysis</h1>
+				<span class="logo-icon">✧</span>
+			</div>
+			<p>Discover your cosmic blueprint and celestial path</p>
+		</header>
+		
+		<main>
+			<AstrologyForm />
+		</main>
+		
+		<footer>
+			<div class="zodiac-mini">
+				<span>♈</span><span>♉</span><span>♊</span><span>♋</span><span>♌</span><span>♍</span>
+				<span>♎</span><span>♏</span><span>♐</span><span>♑</span><span>♒</span><span>♓</span>
+			</div>
+			<p>&copy; {new Date().getFullYear()} Astrology Analysis. All rights reserved.</p>
+		</footer>
+	</div>
+</Layout>
+
+<style>
+	.cosmic-container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 2rem;
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+	}
+	
+	header {
+		text-align: center;
+		margin-bottom: 2.5rem;
+		animation: fadeIn 1.5s ease-out;
+	}
+	
+	.logo {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 0.5rem;
+	}
+	
+	.logo-icon {
+		font-size: 1.5rem;
+		color: var(--color-primary-light);
+		margin: 0 1rem;
+	}
+	
+	h1 {
+		color: var(--color-primary-light);
+		margin: 0;
+		font-size: 2.5rem;
+		font-weight: 700;
+		background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+	}
+	
+	header p {
+		color: var(--color-text-secondary);
+		font-size: 1.2rem;
+		margin-top: 0.5rem;
+		font-weight: 400;
+	}
+	
+	main {
+		flex: 1;
+		margin-bottom: 3rem;
+	}
+	
+	footer {
+		text-align: center;
+		padding: 1.5rem 0;
+		color: var(--color-text-secondary);
+		font-size: 0.875rem;
+		border-top: 1px solid rgba(139, 92, 246, 0.2);
+		margin-top: 2rem;
+	}
+	
+	.zodiac-mini {
+		display: flex;
+		justify-content: center;
+		gap: 0.75rem;
+		margin-bottom: 1rem;
+		flex-wrap: wrap;
+	}
+	
+	.zodiac-mini span {
+		color: var(--color-text-secondary);
+		opacity: 0.6;
+		transition: all 0.3s ease;
+	}
+	
+	.zodiac-mini span:hover {
+		color: var(--color-primary-light);
+		opacity: 1;
+		transform: scale(1.2);
+	}
+	
+	@keyframes fadeIn {
+		from { opacity: 0; transform: translateY(-20px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+	
+	@media (max-width: 768px) {
+		.cosmic-container {
+			padding: 1rem;
+		}
+		
+		h1 {
+			font-size: 2rem;
+		}
+		
+		header p {
+			font-size: 1rem;
+		}
+	}
+</style>

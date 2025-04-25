@@ -1,0 +1,1030 @@
+<div class="form-container">
+  <form id="astrology-form">
+    <h2>Cosmic Birth Chart Analysis</h2>
+    
+    <div class="zodiac-symbols">
+      <div class="symbol" title="Aries">♈</div>
+      <div class="symbol" title="Taurus">♉</div>
+      <div class="symbol" title="Gemini">♊</div>
+      <div class="symbol" title="Cancer">♋</div>
+      <div class="symbol" title="Leo">♌</div>
+      <div class="symbol" title="Virgo">♍</div>
+      <div class="symbol" title="Libra">♎</div>
+      <div class="symbol" title="Scorpio">♏</div>
+      <div class="symbol" title="Sagittarius">♐</div>
+      <div class="symbol" title="Capricorn">♑</div>
+      <div class="symbol" title="Aquarius">♒</div>
+      <div class="symbol" title="Pisces">♓</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="dateOfBirth">Date of Birth:</label>
+      <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+      <div class="input-info">Select your date of birth</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="birthTime">Time of Birth:</label>
+      <input type="time" id="birthTime" name="birthTime" required>
+      <div class="input-info">Enter your exact birth time (24-hour format)</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="placeOfBirth">Place of Birth:</label>
+      <input 
+        type="text" 
+        id="placeOfBirth" 
+        name="placeOfBirth" 
+        placeholder="e.g., Mumbai, India" 
+        autocomplete="off"
+        required
+      >
+      <div class="input-info">Enter city and country of birth</div>
+    </div>
+    
+    <button type="submit" id="submit-btn">
+      <span class="btn-text">Generate Cosmic Analysis</span>
+      <span class="btn-icon">✨</span>
+    </button>
+    
+    <div id="loading" class="loading" style="display: none;">
+      <div class="cosmic-spinner">
+        <div class="planet"></div>
+        <div class="orbit">
+          <div class="meteor"></div>
+        </div>
+      </div>
+      <p>Connecting with cosmic energies...</p>
+      <p class="small-text">This may take a minute or two as we analyze your celestial patterns.</p>
+    </div>
+    
+    <div id="error-message" class="error-message" style="display: none;"></div>
+  </form>
+</div>
+
+<div id="result" class="result-container" style="display: none;">
+  <div class="result-header">
+    <h2>Your Cosmic Analysis</h2>
+    <div class="celestial-graphic">
+      <img src="/birth-chart.svg" alt="Celestial birth chart" class="chart-svg">
+    </div>
+  </div>
+  
+  <div id="analysis-content"></div>
+  
+  <div class="actions">
+    <button id="print-btn" class="action-button print-button">
+      <span class="btn-icon">🖨️</span>
+      <span class="btn-text">Print Analysis</span>
+    </button>
+    <button id="back-btn" class="action-button back-button">
+      <span class="btn-icon">⬅️</span>
+      <span class="btn-text">New Analysis</span>
+    </button>
+  </div>
+</div>
+
+<style>
+  .form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background-color: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3), 
+                0 0 20px rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.1);
+  }
+  
+  .zodiac-symbols {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    max-width: 400px;
+  }
+  
+  .symbol {
+    font-size: 1.5rem;
+    margin: 0.3rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 50%;
+    color: var(--color-primary-light);
+    transition: all 0.3s ease;
+    cursor: default;
+  }
+  
+  .symbol:hover {
+    transform: scale(1.2);
+    color: var(--color-accent);
+    background: rgba(30, 41, 59, 0.9);
+  }
+  
+  h2 {
+    color: var(--color-text);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+  }
+  
+  h2::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    border-radius: 3px;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+  
+  .input-info {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    margin-top: 0.25rem;
+    transition: opacity 0.3s ease;
+  }
+  
+  input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    color: var(--color-text);
+    transition: all 0.3s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  /* Modern styling for date and time inputs */
+  input[type="date"],
+  input[type="time"] {
+    color-scheme: dark;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a78bfa' viewBox='0 0 16 16'><path d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 8px) center;
+    background-size: 16px;
+    cursor: pointer;
+  }
+  
+  input:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    background-color: rgba(15, 23, 42, 0.8);
+  }
+  
+  input:focus + .input-info {
+    opacity: 1;
+  }
+
+  input::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+  }
+  
+  button {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: all 0.6s ease;
+  }
+  
+  button:hover::before {
+    left: 100%;
+  }
+  
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15), 0 0 20px rgba(139, 92, 246, 0.4);
+  }
+  
+  button:active {
+    transform: translateY(1px);
+  }
+  
+  .btn-icon {
+    font-size: 1.2rem;
+  }
+  
+  .loading {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .cosmic-spinner {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1rem;
+  }
+  
+  .orbit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    border: 2px solid rgba(139, 92, 246, 0.3);
+    border-radius: 50%;
+    animation: spin 4s linear infinite;
+  }
+  
+  .meteor {
+    position: absolute;
+    top: -5px;
+    left: 45px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--color-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 20px 2px var(--color-accent);
+  }
+  
+  .planet {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.8);
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .small-text {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: 0.5rem;
+  }
+  
+  .error-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: rgba(220, 38, 38, 0.1);
+    color: #f87171;
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    border-left: 3px solid #f87171;
+  }
+  
+  .result-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background-color: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3), 
+                0 0 20px rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.1);
+  }
+  
+  .result-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .celestial-graphic {
+    margin: 1.5rem auto;
+    width: 200px;
+    height: 200px;
+  }
+  
+  .chart-svg {
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+  }
+  
+  #analysis-content {
+    margin: 2rem 0;
+    line-height: 1.6;
+    font-size: 1.1rem;
+    color: var(--color-text);
+  }
+  
+  /* Table of Contents styling */
+  .toc {
+    background-color: rgba(15, 23, 42, 0.5);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--color-primary);
+  }
+  
+  .toc h3 {
+    margin-top: 0 !important;
+    color: var(--color-text);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .toc li {
+    margin-bottom: 0.5rem;
+    padding-left: 0;
+  }
+  
+  .toc a {
+    color: var(--color-primary-light);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 500;
+  }
+  
+  .toc a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+  
+  .toc a.h3 {
+    padding-left: 1rem;
+    font-size: 0.95rem;
+  }
+  
+  /* Analysis content styling */
+  #analysis-content h2, 
+  #analysis-content h3,
+  #analysis-content h4 {
+    color: var(--color-primary-light);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    scroll-margin-top: 2rem;
+  }
+  
+  #analysis-content h2 {
+    font-size: 1.6rem;
+    border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+    padding-bottom: 0.5rem;
+  }
+  
+  #analysis-content h3 {
+    font-size: 1.3rem;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+    padding-bottom: 0.3rem;
+  }
+  
+  #analysis-content h4 {
+    font-size: 1.1rem;
+  }
+  
+  #analysis-content strong {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+  
+  #analysis-content em {
+    color: var(--color-primary-light);
+  }
+  
+  #analysis-content ul {
+    margin: 0.75rem 0 1.5rem 0;
+    padding: 0 0 0 1.25rem;
+    list-style-type: none;
+  }
+  
+  #analysis-content li {
+    margin-bottom: 0.75rem;
+    padding-left: 1.25rem;
+    position: relative;
+    line-height: 1.5;
+  }
+  
+  #analysis-content li::before {
+    content: "✧";
+    color: var(--color-primary);
+    position: absolute;
+    left: 0;
+    font-size: 1rem;
+  }
+  
+  #analysis-content br {
+    display: block;
+    content: "";
+    margin-top: 0.5rem;
+  }
+  
+  #analysis-content hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(90deg, rgba(139, 92, 246, 0), rgba(139, 92, 246, 0.5), rgba(139, 92, 246, 0));
+    margin: 2rem 0;
+  }
+  
+  #analysis-content a {
+    color: var(--color-primary-light);
+    text-decoration: none;
+  }
+  
+  #analysis-content a:hover {
+    text-decoration: underline;
+    color: var(--color-accent);
+  }
+  
+  .actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .action-button {
+    flex: 1;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+  
+  .action-button:hover {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: var(--color-primary);
+  }
+  
+  .print-button {
+    background: rgba(15, 23, 42, 0.8);
+  }
+  
+  .back-button {
+    background: rgba(15, 23, 42, 0.8);
+  }
+  
+  /* Print styles */
+  @media print {
+    body, html {
+      width: 100%;
+      height: auto;
+      margin: 0;
+      padding: 0;
+      background: white;
+    }
+    
+    .stars, .stars2, .stars3, .cosmic-container {
+      display: none !important;
+    }
+    
+    .result-container {
+      display: block !important;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+      box-shadow: none;
+      border: none;
+      background: white;
+      color: black;
+    }
+    
+    .actions, header, footer, nav {
+      display: none !important;
+    }
+    
+    .celestial-graphic {
+      display: block;
+      margin: 1rem auto;
+      width: 300px;
+      height: 300px;
+      page-break-inside: avoid;
+    }
+    
+    .toc {
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-left: 4px solid #8b5cf6;
+      color: black;
+      page-break-inside: avoid;
+    }
+    
+    .toc h3 {
+      color: black;
+    }
+    
+    .toc a {
+      color: #8b5cf6;
+    }
+    
+    #analysis-content {
+      font-size: 12pt !important;
+      color: black !important;
+      width: 100%;
+      display: block !important;
+      page-break-before: auto;
+    }
+    
+    #analysis-content h2, 
+    #analysis-content h3, 
+    #analysis-content h4 {
+      page-break-after: avoid;
+      color: black !important;
+      font-weight: bold;
+    }
+    
+    #analysis-content h2 {
+      font-size: 18pt !important;
+      border-bottom: 1px solid #ddd;
+      margin-top: 1.5rem !important;
+    }
+    
+    #analysis-content h3 {
+      font-size: 16pt !important;
+      margin-top: 1rem !important;
+    }
+    
+    #analysis-content h4 {
+      font-size: 14pt !important;
+    }
+    
+    #analysis-content ul, 
+    #analysis-content li {
+      page-break-inside: avoid;
+    }
+    
+    #analysis-content li::before {
+      color: black !important;
+    }
+    
+    #analysis-content strong,
+    #analysis-content em {
+      color: black !important;
+    }
+    
+    #analysis-content a {
+      color: #8b5cf6 !important;
+      text-decoration: underline;
+    }
+    
+    #analysis-content hr {
+      border-top: 1px solid #ddd;
+      background: none;
+    }
+  }
+  
+  /* Enhanced responsive styles */
+  @media (max-width: 768px) {
+    .form-container, 
+    .result-container {
+      padding: 1.5rem;
+      margin: 1rem;
+      width: auto;
+    }
+    
+    h2 {
+      font-size: 1.5rem;
+    }
+    
+    .actions {
+      flex-direction: column;
+    }
+    
+    .zodiac-symbols {
+      max-width: 300px;
+    }
+    
+    .symbol {
+      font-size: 1.2rem;
+      width: 2rem;
+      height: 2rem;
+      margin: 0.2rem;
+    }
+  }
+  
+  /* Mobile-specific enhancements */
+  @media (max-width: 480px) {
+    .form-container, 
+    .result-container {
+      padding: 1.25rem;
+      margin: 0.5rem;
+    }
+    
+    h2 {
+      font-size: 1.3rem;
+    }
+    
+    h2::after {
+      width: 80px;
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    label {
+      font-size: 0.95rem;
+    }
+    
+    input {
+      padding: 0.7rem 0.8rem;
+      font-size: 0.95rem;
+    }
+    
+    button {
+      padding: 0.7rem 1rem;
+    }
+    
+    .celestial-graphic {
+      width: 150px;
+      height: 150px;
+    }
+    
+    #analysis-content {
+      font-size: 1rem;
+    }
+    
+    .toc {
+      padding: 1rem;
+    }
+    
+    .zodiac-symbols {
+      max-width: 240px;
+    }
+    
+    .symbol {
+      font-size: 1rem;
+      width: 1.8rem;
+      height: 1.8rem;
+      margin: 0.15rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('astrology-form');
+    const loading = document.getElementById('loading');
+    const errorMessage = document.getElementById('error-message');
+    const result = document.getElementById('result');
+    const analysisContent = document.getElementById('analysis-content');
+    const backBtn = document.getElementById('back-btn');
+    const printBtn = document.getElementById('print-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    // Function to reset the form
+    function resetForm() {
+      if (form) {
+        form.reset();
+      }
+    }
+    
+    // Rate limiting
+    const RATE_LIMIT = {
+      count: 0,
+      lastReset: Date.now(),
+      maxRequests: 5,
+      timeWindow: 60 * 60 * 1000, // 1 hour in milliseconds
+    };
+    
+    // Function to check rate limit
+    function checkRateLimit() {
+      const now = Date.now();
+      
+      // Reset counter if time window has passed
+      if (now - RATE_LIMIT.lastReset > RATE_LIMIT.timeWindow) {
+        RATE_LIMIT.count = 0;
+        RATE_LIMIT.lastReset = now;
+      }
+      
+      // Check if limit is reached
+      if (RATE_LIMIT.count >= RATE_LIMIT.maxRequests) {
+        return false;
+      }
+      
+      // Increment counter
+      RATE_LIMIT.count++;
+      return true;
+    }
+    
+    // Function to format date from ISO to DD/MM/YYYY
+    function formatDateForAPI(isoDate) {
+      if (!isoDate) return '';
+      const date = new Date(isoDate);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+    
+    // Function to format the analysis text properly
+    function formatAnalysisText(text) {
+      if (!text) return '';
+      
+      // First, clean up any unwanted character sequences
+      let formattedText = text
+        // Remove any comment-like structures
+        .replace(/\/\/(.*?)$/gm, '')
+        .replace(/\/\*(.*?)\*\//gs, '')
+        
+        // Clean up markdown-style formatting
+        // Headers handling - add proper header tags and cleanup extra symbols
+        .replace(/^#{3,}\s*(.*?)$/gm, '<h4>$1</h4>')
+        .replace(/^##\s*(.*?)$/gm, '<h3>$1</h3>')
+        .replace(/^#\s*(.*?)$/gm, '<h2>$1</h2>')
+        
+        // Handle other header styles like === or --- underlines
+        .replace(/^(.*?)[\n\r]\s*={3,}\s*$/gm, '<h2>$1</h2>')
+        .replace(/^(.*?)[\n\r]\s*-{3,}\s*$/gm, '<h3>$1</h3>')
+        
+        // Bold text with ** or __
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/__(.*?)__/g, '<strong>$1</strong>')
+        
+        // Italic text with * or _
+        .replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+        .replace(/(?<!_)_(?!_)(.*?)(?<!_)_(?!_)/g, '<em>$1</em>')
+        
+        // Handle bullet points with proper list formatting
+        // For hyphens, asterisks, and bullet points
+        .replace(/^\s*[-*•]\s+(.*?)$/gm, '<li>$1</li>');
+      
+      // Group list items into unordered lists
+      let inList = false;
+      let lines = formattedText.split('\n');
+      formattedText = '';
+      
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        
+        if (line.includes('<li>')) {
+          if (!inList) {
+            formattedText += '<ul>';
+            inList = true;
+          }
+          formattedText += line;
+        } else {
+          if (inList) {
+            formattedText += '</ul>';
+            inList = false;
+          }
+          formattedText += line + '\n';
+        }
+      }
+      
+      if (inList) {
+        formattedText += '</ul>';
+      }
+      
+      // Handle section dividers and decorative elements
+      formattedText = formattedText
+        .replace(/^\s*[-=*]{3,}\s*$/gm, '<hr>')
+        
+        // Convert URLs to actual links
+        .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
+        
+        // Remove extra whitespace while preserving paragraph breaks
+        .replace(/\n\s*\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+      
+      return formattedText;
+    }
+    
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Check rate limit
+        if (!checkRateLimit()) {
+          errorMessage.textContent = `Rate limit exceeded. Please try again in an hour.`;
+          errorMessage.style.display = 'block';
+          return;
+        }
+        
+        // Basic input validation
+        const dateInput = form.elements.dateOfBirth.value.trim();
+        const timeInput = form.elements.birthTime.value.trim();
+        const placeOfBirth = form.elements.placeOfBirth.value.trim();
+        
+        if (!dateInput) {
+          errorMessage.textContent = `Please select your date of birth.`;
+          errorMessage.style.display = 'block';
+          return;
+        }
+        
+        if (!timeInput) {
+          errorMessage.textContent = `Please select your birth time.`;
+          errorMessage.style.display = 'block';
+          return;
+        }
+        
+        if (placeOfBirth.length < 3) {
+          errorMessage.textContent = `Please enter a valid place of birth.`;
+          errorMessage.style.display = 'block';
+          return;
+        }
+        
+        // Hide any previous errors
+        errorMessage.style.display = 'none';
+        
+        // Show loading
+        loading.style.display = 'block';
+        submitBtn.disabled = true;
+        
+        // Format data for API
+        const formattedDate = formatDateForAPI(dateInput);
+        
+        // Get form data
+        const requestData = {
+          dateOfBirth: formattedDate,
+          birthTime: timeInput,
+          placeOfBirth: placeOfBirth
+        };
+        
+        try {
+          const response = await fetch('/api/astrology', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          // Display the result with proper formatting
+          if (analysisContent) {
+            analysisContent.innerHTML = formatAnalysisText(data.analysis);
+            // Add anchor links for easy navigation
+            addTableOfContents();
+            form.parentElement.style.display = 'none';
+            result.style.display = 'block';
+            
+            // Scroll to top of results
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          errorMessage.textContent = `An error occurred: ${error.message}. Please try again.`;
+          errorMessage.style.display = 'block';
+        } finally {
+          loading.style.display = 'none';
+          submitBtn.disabled = false;
+        }
+      });
+    }
+    
+    // Function to add a table of contents for easy navigation
+    function addTableOfContents() {
+      if (!analysisContent) return;
+      
+      const headings = analysisContent.querySelectorAll('h2, h3');
+      if (headings.length < 3) return; // Don't add TOC for short analyses
+      
+      const toc = document.createElement('div');
+      toc.className = 'toc';
+      toc.innerHTML = '<h3>Chart Navigation</h3><ul></ul>';
+      const tocList = toc.querySelector('ul');
+      
+      headings.forEach((heading, index) => {
+        const id = `section-${index}`;
+        heading.id = id;
+        
+        const listItem = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `#${id}`;
+        link.textContent = heading.textContent;
+        link.className = heading.tagName.toLowerCase();
+        
+        listItem.appendChild(link);
+        tocList.appendChild(listItem);
+      });
+      
+      analysisContent.insertBefore(toc, analysisContent.firstChild);
+    }
+    
+    // Enhanced print functionality
+    if (printBtn) {
+      printBtn.addEventListener('click', () => {
+        // Create a print-optimized version
+        const printContent = document.createElement('div');
+        printContent.innerHTML = `
+          <h1 style="text-align: center; margin-bottom: 1rem;">Astrology Analysis</h1>
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <p>Date of Birth: <strong>${document.getElementById('dateOfBirth')?.value || ''}</strong></p>
+            <p>Birth Time: <strong>${document.getElementById('birthTime')?.value || ''}</strong></p>
+            <p>Place of Birth: <strong>${document.getElementById('placeOfBirth')?.value || ''}</strong></p>
+          </div>
+        `;
+        
+        // Clone the analysis content
+        const analysisClone = analysisContent.cloneNode(true);
+        printContent.appendChild(analysisClone);
+        
+        // Hide all current content temporarily
+        const originalContent = document.body.innerHTML;
+        
+        // Set print content
+        document.body.innerHTML = printContent.innerHTML;
+        
+        // Print
+        window.print();
+        
+        // Restore original content
+        document.body.innerHTML = originalContent;
+        
+        // Reattach event listeners
+        const newBackBtn = document.getElementById('back-btn');
+        const newPrintBtn = document.getElementById('print-btn');
+        if (newBackBtn) {
+          newBackBtn.addEventListener('click', () => {
+            document.getElementById('result').style.display = 'none';
+            document.querySelector('.form-container').style.display = 'block';
+            document.getElementById('astrology-form')?.reset();
+          });
+        }
+        
+        if (newPrintBtn) {
+          newPrintBtn.addEventListener('click', () => {
+            printBtn.click(); // Reuse this same function
+          });
+        }
+      });
+    }
+    
+    // Handle back button with form reset
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        result.style.display = 'none';
+        document.querySelector('.form-container').style.display = 'block';
+        resetForm(); // Reset the form data when going back
+      });
+    }
+    
+    // Add zodiac sign tooltips with additional info
+    const zodiacSymbols = document.querySelectorAll('.zodiac-symbols .symbol');
+    const zodiacInfo = [
+      'Aries: The Ram - Fire sign ruled by Mars',
+      'Taurus: The Bull - Earth sign ruled by Venus',
+      'Gemini: The Twins - Air sign ruled by Mercury',
+      'Cancer: The Crab - Water sign ruled by Moon',
+      'Leo: The Lion - Fire sign ruled by Sun',
+      'Virgo: The Virgin - Earth sign ruled by Mercury',
+      'Libra: The Scales - Air sign ruled by Venus',
+      'Scorpio: The Scorpion - Water sign ruled by Pluto',
+      'Sagittarius: The Archer - Fire sign ruled by Jupiter',
+      'Capricorn: The Goat - Earth sign ruled by Saturn',
+      'Aquarius: The Water Bearer - Air sign ruled by Uranus',
+      'Pisces: The Fish - Water sign ruled by Neptune'
+    ];
+    
+    zodiacSymbols.forEach((symbol, index) => {
+      symbol.title = zodiacInfo[index];
+    });
+  });
+</script> 
