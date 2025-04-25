@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
 
 interface DeepSeekResponse {
   id: string;
@@ -76,6 +76,7 @@ IMPORTANT: Do not include any follow-up questions or invitations for further con
   `;
 
   try {
+    // Using native fetch available in Cloudflare Workers
     const response = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: {
@@ -97,11 +98,13 @@ IMPORTANT: Do not include any follow-up questions or invitations for further con
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error(`DeepSeek API response status: ${response.status}`);
+      console.error(`DeepSeek API response body: ${errorText}`);
       throw new Error(`DeepSeek API error: ${response.status} ${errorText}`);
     }
 
-    const data = await response.json() as DeepSeekResponse;
-    let content = data.choices[0].message.content;
+    const responseData = await response.json() as DeepSeekResponse;
+    let content = responseData.choices[0].message.content;
     
     // Remove any follow-up questions that might still appear
     content = content.replace(/Would you like .*?\?(\s*)$/s, '');
