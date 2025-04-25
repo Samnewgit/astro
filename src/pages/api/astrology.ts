@@ -62,6 +62,7 @@ export const POST: APIRoute = async ({ request }) => {
     try {
       data = await request.json();
     } catch (e) {
+      console.error('Failed to parse request JSON:', e);
       return new Response(
         JSON.stringify({ error: 'Invalid JSON in request body' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
@@ -71,6 +72,7 @@ export const POST: APIRoute = async ({ request }) => {
     // Validate input
     const validationError = validateInput(data);
     if (validationError) {
+      console.error('Input validation error:', validationError);
       return new Response(
         JSON.stringify({ error: validationError }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
@@ -84,34 +86,37 @@ export const POST: APIRoute = async ({ request }) => {
       placeOfBirth: sanitizeInput(data.placeOfBirth)
     };
     
-    // Log the request for monitoring (remove in production)
+    // Log the request for debugging
     console.log('Processing request for:', sanitizedData);
+    console.log('API Key exists:', !!import.meta.env.DEEPSEEK_API_KEY);
     
     // Get analysis from DeepSeek
-    const analysis = await getAstrologyAnalysis(sanitizedData);
-    
-    // Return analysis
-    return new Response(
-      JSON.stringify({ analysis }),
-      { 
-        status: 200, 
-        headers: { 
-          'Content-Type': 'application/json',
-          'Cache-Control': 'private, max-age=600' // Cache for 10 minutes
-        } 
-      }
-    );
+    try {
+      const analysis = await getAstrologyAnalysis(sanitizedData);
+      
+      // Return analysis
+      return new Response(
+        JSON.stringify({ analysis }),
+        { 
+          status: 200, 
+          headers: { 
+            'Content-Type': 'application/json',
+            'Cache-Control': 'private, max-age=600' // Cache for 10 minutes
+          } 
+        }
+      );
+    } catch (apiError) {
+      console.error('DeepSeek API error:', apiError);
+      return new Response(
+        JSON.stringify({ error: 'Error communicating with the AI service. Please try again later.' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
     
   } catch (error) {
-    console.error('Astrology API error:', error);
-    
-    // Don't expose internal error details
-    const errorMessage = error instanceof Error 
-      ? 'Server error processing your request' 
-      : 'An unknown error occurred';
-    
+    console.error('Unexpected error in API route:', error);
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: 'Server error. Please try again later.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
