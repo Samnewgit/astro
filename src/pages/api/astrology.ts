@@ -1,10 +1,15 @@
 import type { APIRoute } from 'astro';
-import { getAstrologyAnalysis } from '../../services/deepseekService';
+// import { getAstrologyAnalysis } from '../../services/deepseekService';
 
 // API key validation
 function isValidApiKey(apiKey: string | null): boolean {
+  // For debugging
+  console.log('API Key type:', typeof apiKey);
+  console.log('API Key length:', apiKey ? apiKey.length : 0);
+  console.log('ENV var type:', typeof import.meta.env.DEEPSEEK_API_KEY);
+  console.log('ENV var length:', import.meta.env.DEEPSEEK_API_KEY ? import.meta.env.DEEPSEEK_API_KEY.length : 0);
+  
   // In a real production app, you would use more secure methods
-  // like comparing against a hash, not storing the key directly
   return apiKey === import.meta.env.DEEPSEEK_API_KEY;
 }
 
@@ -48,70 +53,48 @@ function sanitizeInput(input: string): string {
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    // Check if request has proper content type
-    const contentType = request.headers.get('Content-Type');
-    if (!contentType || !contentType.includes('application/json')) {
-      return new Response(
-        JSON.stringify({ error: 'Content-Type must be application/json' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
+    console.log('POST request received');
     
-    // Parse and validate request data
-    let data;
-    try {
-      data = await request.json();
-    } catch (e) {
-      console.error('Failed to parse request JSON:', e);
-      return new Response(
-        JSON.stringify({ error: 'Invalid JSON in request body' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
+    // Skip all validation and processing
+    // TEMPORARY SOLUTION FOR DEBUGGING
     
-    // Validate input
-    const validationError = validateInput(data);
-    if (validationError) {
-      console.error('Input validation error:', validationError);
-      return new Response(
-        JSON.stringify({ error: validationError }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-    
-    // Sanitize all inputs
-    const sanitizedData = {
-      dateOfBirth: sanitizeInput(data.dateOfBirth),
-      birthTime: sanitizeInput(data.birthTime),
-      placeOfBirth: sanitizeInput(data.placeOfBirth)
-    };
-    
-    // Log the request for debugging
-    console.log('Processing request for:', sanitizedData);
-    console.log('API Key exists:', !!import.meta.env.DEEPSEEK_API_KEY);
-    
-    // Get analysis from DeepSeek
-    try {
-      const analysis = await getAstrologyAnalysis(sanitizedData);
-      
-      // Return analysis
-      return new Response(
-        JSON.stringify({ analysis }),
-        { 
-          status: 200, 
-          headers: { 
-            'Content-Type': 'application/json',
-            'Cache-Control': 'private, max-age=600' // Cache for 10 minutes
-          } 
-        }
-      );
-    } catch (apiError) {
-      console.error('DeepSeek API error:', apiError);
-      return new Response(
-        JSON.stringify({ error: 'Error communicating with the AI service. Please try again later.' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
+    // Return a static response
+    return new Response(
+      JSON.stringify({ 
+        analysis: `
+# Astrological Analysis
+
+## Birth Chart Summary
+- Sun in Aries: Strong leadership qualities
+- Moon in Cancer: Emotionally intuitive
+- Ascendant in Libra: Diplomatic approach to life
+
+## Life Event Predictions
+### Positive Influences
+- Career advancement in 2026
+- Financial growth in mid-2027
+- Relationship harmony in early 2028
+
+### Challenges
+- Health awareness needed in late 2025
+- Communication challenges in 2026
+
+## Remedial Suggestions
+- Wear red garnet for strength
+- Practice meditation on Tuesdays
+- Charity work related to children
+
+THIS IS A STATIC TEST RESPONSE
+`
+      }),
+      { 
+        status: 200, 
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'private, max-age=600'
+        } 
+      }
+    );
     
   } catch (error) {
     console.error('Unexpected error in API route:', error);
