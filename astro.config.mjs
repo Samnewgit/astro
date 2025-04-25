@@ -12,5 +12,8 @@ export default defineConfig({
     define: {
       'import.meta.env.DEEPSEEK_API_KEY': JSON.stringify(process.env.DEEPSEEK_API_KEY),
     },
+    build: {
+      minify: false // Helps with debugging
+    }
   },
 });
