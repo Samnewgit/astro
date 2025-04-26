@@ -1,6 +1,11 @@
 name = "astrology-analysis"
 compatibility_date = "2023-10-30"
 compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist"
+
+# Environment variables
+[vars]
+DEEPSEEK_API_KEY = "PLACEHOLDER_FOR_CLOUDFLARE_DASHBOARD"
 
 # KV Namespace binding
 # Replace XXXXX with actual ID from `wrangler kv:namespace create SESSION`
@@ -8,13 +13,18 @@ compatibility_flags = ["nodejs_compat"]
 # binding = "SESSION"
 # id = "XXXXX"
 
-# Environment variables
-[vars]
-# Add your variables here
-
 # [[env.production.kv_namespaces]]
 # binding = "SESSION"
 # id = "XXXXX"
 
-[site]
-bucket = "./dist" 
+# Remove these conflicting fields
+# [site]
+# bucket = "./dist"
+
+# [functions]
+# directory = "functions"
+
+# [build]
+# command = "npm run build"
+# [build.upload]
+# format = "service-worker" 
