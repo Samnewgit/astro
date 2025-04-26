@@ -1,4 +1,14 @@
-export async function onRequest({ request, env }) {
+interface Env {
+  DEEPSEEK_API_KEY: string;
+}
+
+interface BirthData {
+  dateOfBirth: string;
+  birthTime: string;
+  placeOfBirth: string;
+}
+
+export async function onRequest({ request, env }: { request: Request; env: Env }) {
   // Check for API key
   const apiKey = env.DEEPSEEK_API_KEY;
   if (!apiKey) {
@@ -83,7 +93,7 @@ export async function onRequest({ request, env }) {
 }
 
 // Input validation
-function validateInput(data) {
+function validateInput(data: any): string | null {
   if (!data) return 'Missing request body';
   
   if (!data.dateOfBirth || typeof data.dateOfBirth !== 'string') 
@@ -113,7 +123,7 @@ function validateInput(data) {
 }
 
 // Sanitize input to prevent injection attacks
-function sanitizeInput(input) {
+function sanitizeInput(input: string): string {
   // Remove potentially dangerous characters
   return input
     .replace(/[<>]/g, '') // Remove HTML tags
@@ -121,7 +131,7 @@ function sanitizeInput(input) {
 }
 
 // API call to DeepSeek
-async function getAstrologyAnalysis(data, apiKey) {
+async function getAstrologyAnalysis(data: BirthData, apiKey: string) {
   const prompt = `
 Astrology Analysis Prompt
 
