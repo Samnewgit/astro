@@ -4,9 +4,10 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-  // Enable server-side rendering for API endpoints
+  // Server-side rendering is required for API endpoints to work
   output: 'server',
   adapter: cloudflare(),
+  
   // Make environment variables available at build time
   vite: {
     define: {
